@@ -1,17 +1,20 @@
-package com.skillnest.userservice.data.model;
+package com.skillnest.everythingsouvneirs.data.model;
 
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document
+@Entity
 @Data
 public class OTP {
 
     @Id
-    private String id;
+    @GeneratedValue
+    private Long id;
     private String otp;
     private String email;
     private LocalDateTime createdAt;

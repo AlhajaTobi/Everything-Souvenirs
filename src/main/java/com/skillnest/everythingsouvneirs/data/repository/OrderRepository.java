@@ -1,4 +1,9 @@
 package com.skillnest.everythingsouvneirs.data.repository;
 
-public interface OrderRepository {
+import com.skillnest.everythingsouvneirs.data.model.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface OrderRepository extends JpaRepository<Order, Integer> {
 }

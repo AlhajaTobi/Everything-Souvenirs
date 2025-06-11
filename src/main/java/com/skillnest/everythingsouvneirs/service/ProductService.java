@@ -1,4 +1,4 @@
 package com.skillnest.everythingsouvneirs.service;
 
-public class ProductService {
+public interface ProductService {
 }
