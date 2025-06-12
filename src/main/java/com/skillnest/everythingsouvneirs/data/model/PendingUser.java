@@ -1,17 +1,19 @@
-package com.skillnest.userservice.data.model;
+package com.skillnest.everythingsouvneirs.data.model;
 
-import com.skillnest.userservice.data.enums.Role;
+import com.skillnest.everythingsouvneirs.data.enums.Role;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
+@Entity
 public class PendingUser {
     @Id
-    private String id;
+    private Long id;
     private String email;
     private String password;
     private String otp;
