@@ -1,19 +1,20 @@
 package com.skillnest.everythingsouvneirs.data.model;
 
 import com.skillnest.everythingsouvneirs.data.enums.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Setter
 @Getter
-@Entity
+@Document
 public class PendingUser {
     @Id
-    private Long id;
+    private String id = UUID.randomUUID().toString();
     private String email;
     private String password;
     private String otp;

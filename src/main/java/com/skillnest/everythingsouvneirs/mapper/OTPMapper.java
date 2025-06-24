@@ -17,10 +17,11 @@ public class OTPMapper {
         otp.setExpiresAt(LocalDateTime.now().plusMinutes(2));
         return otp;
     }
-    public static OTPResponse mapToOTPResponse(String message, String email) {
+    public static OTPResponse mapToOTPResponse(String message, String email,String otp) {
         OTPResponse otpResponse = new OTPResponse();
         otpResponse.setMessage(message);
         otpResponse.setEmail(email);
+        otpResponse.setOtp(otp);
         return otpResponse;
     }
 }

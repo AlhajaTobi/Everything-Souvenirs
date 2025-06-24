@@ -59,10 +59,10 @@ public class UserMapper {
         return uploadResponse;
     }
 
-    public static OTPResponse mapToOtpSentResponse(String message, String email) {
-        return OTPMapper.mapToOTPResponse(message, email);
+    public static OTPResponse mapToOtpSentResponse(String message, String email,String otp) {
+        return OTPMapper.mapToOTPResponse(message, email,otp);
     }
-    public static FoundResponse mapToFoundResponse(String message, Long id){
+    public static FoundResponse mapToFoundResponse(String message, String id){
         FoundResponse foundResponse = new FoundResponse();
         foundResponse.setMessage(message);
         foundResponse.setId(id);

@@ -67,7 +67,10 @@ public class UserServiceImpl implements UserService{
 
         emailService.sendEmail(request.getEmail(), otp);
 
-        return UserMapper.mapToOtpSentResponse("OTP sent successfully. Please verify to complete registration.", request.getEmail());
+        return UserMapper.mapToOtpSentResponse(
+                "OTP sent successfully. Please verify to complete registration.",
+                request.getEmail(),
+                pendingUser.getOtp());
     }
 
     @Override
@@ -92,10 +95,8 @@ public class UserServiceImpl implements UserService{
         user.setActive(true);
         user.setGoogleUser(false);
         userRepository.save(user);
+        pendingUserRepository.deleteAll();
         var jwtToken = jwtTokenUtil.generateToken(user);
-
-
-        pendingUserRepository.delete(pendingUser);
 
         return UserMapper.mapToCreatedUserResponse(jwtToken,user,"Registration Successful");
     }
@@ -191,7 +192,7 @@ public class UserServiceImpl implements UserService{
         return UserMapper.mapToResetPasswordResponse("PendingUser sent Successfully", otp.getOtp());
     }
     @Override
-    public FoundResponse findUserById(Long id){
+    public FoundResponse findUserById(String id){
         Optional<User> user = userRepository.findById(id);
         if(user.isEmpty()){
             throw new UserNotFoundException("User not found with id");

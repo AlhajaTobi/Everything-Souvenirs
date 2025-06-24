@@ -1,21 +1,23 @@
 package com.skillnest.everythingsouvneirs.data.model;
 
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
-@Entity
+@Document
 public class Cart {
     @Id
-    @GeneratedValue
-    private Long id;
+    private String id = UUID.randomUUID().toString();
 
-    @OneToOne
+    @DBRef
     private Customer customer;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @DBRef
     private List<Item> items;
 }

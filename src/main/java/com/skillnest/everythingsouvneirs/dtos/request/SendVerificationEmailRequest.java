@@ -7,4 +7,6 @@ import lombok.Setter;
 @Getter
 public class SendVerificationEmailRequest {
     private String email;
+    private String message;
+
 }

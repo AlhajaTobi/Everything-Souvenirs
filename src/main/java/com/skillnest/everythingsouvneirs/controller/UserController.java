@@ -109,7 +109,7 @@ public class UserController {
         }
     }
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> findUserById(@PathVariable Long userId){
+    public ResponseEntity<UserDto> findUserById(@PathVariable String userId){
         FoundResponse userFound = userService.findUserById(userId);
         Optional<User> existingUser = userRepository.findById(userFound.getId());
         if(existingUser.isEmpty()){

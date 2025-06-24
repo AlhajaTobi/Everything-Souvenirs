@@ -8,5 +8,5 @@ import lombok.Setter;
 public class OTPResponse {
     private String message;
     private String email;
-
+    private String otp;
 }
