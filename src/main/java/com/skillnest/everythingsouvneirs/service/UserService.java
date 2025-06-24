@@ -21,7 +21,7 @@ public interface UserService {
 
     ResetPasswordResponse sendResetOtp(ResetPasswordRequest resetPasswordRequest);
 
-    FoundResponse findUserById(Long id);
+    FoundResponse findUserById(String id);
 
     LoginResponse handleGoogleLogin(String email, String name);
 }
