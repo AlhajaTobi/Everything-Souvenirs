@@ -1,14 +1,8 @@
 package com.skillnest.everythingsouvneirs.service;
 
 import com.cloudinary.Cloudinary;
-import com.skillnest.everythingsouvneirs.data.model.*;
-import com.skillnest.everythingsouvneirs.data.enums.*;
-import com.skillnest.everythingsouvneirs.data.repository.OTPRepository;
-import com.skillnest.everythingsouvneirs.data.repository.PendingUserRepository;
-import com.skillnest.everythingsouvneirs.data.repository.UserRepository;
 import com.skillnest.everythingsouvneirs.dtos.request.*;
 import com.skillnest.everythingsouvneirs.dtos.response.*;
-import com.skillnest.everythingsouvneirs.util.JwtUtil;
 import com.skillnest.everythingsouvneirs.exception.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

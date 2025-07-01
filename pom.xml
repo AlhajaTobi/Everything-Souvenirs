@@ -18,7 +18,7 @@
     <description>Everything-Souvneirs</description>
 
     <properties>
-        <java.version>24</java.version>
+        <java.version>22</java.version>
     </properties>
 
     <dependencies>
@@ -97,6 +97,13 @@
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.1</version>
         </dependency>
 
         <!-- Web -->
