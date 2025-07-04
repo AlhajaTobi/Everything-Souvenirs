@@ -1,11 +1,11 @@
 package com.skillnest.everythingsouvneirs.service;
 
+import com.skillnest.everythingsouvneirs.data.model.QuoteRequest;
 import org.springframework.scheduling.annotation.Async;
 
 public interface EmailService {
 
-    @Async
-    void sendEmail(String to, String emailContent);
-    @Async
-    void sendResetPasswordEmail(String toEmail, String otp);
+    void sendQuoteRequestConfirmation(QuoteRequest quoteRequest);
+    void sendQuoteRequestNotification(QuoteRequest quoteRequest);
+    void sendQuoteStatusUpdate(QuoteRequest quoteRequest);
 }

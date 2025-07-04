@@ -1,107 +1,109 @@
 package com.skillnest.everythingsouvneirs.service;
 
-import com.skillnest.everythingsouvneirs.exception.EmailNotSentException;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.skillnest.everythingsouvneirs.data.model.QuoteRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
-@RequiredArgsConstructor
-public class EmailServiceImpl implements EmailService {
+public class EmailServiceImpl implements EmailService{
 
-    private final JavaMailSender mailSender;
+    @Autowired
+    private JavaMailSender mailSender;
 
-    @Value("${spring.mail.username}")
+    @Value("${app.email.from}")
     private String fromEmail;
 
-    private static final int OTP_EXPIRY_MINUTES = 2;
+    @Value("${app.email.admin}")
+    private String adminEmail;
 
-    @Async
-    @Override
-    public void sendEmail(String toEmail, String otp) {
-        String subject = "Your OTP Code";
-        String htmlContent = buildOtpHtmlTemplate(otp);
-        sendHtmlEmail(toEmail, subject, htmlContent);
+    public void sendQuoteRequestConfirmation(QuoteRequest quoteRequest) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(quoteRequest.getEmail());
+        message.setSubject("Quote Request Received - Everything Souvenirs & Gifts");
+
+        String text = String.format(
+                "Dear %s,\n\n" +
+                        "Thank you for your quote request. We have received your inquiry for %s.\n\n" +
+                        "Request Details:\n" +
+                        "Product: %s\n" +
+                        "Quantity: %s\n" +
+                        "Company: %s\n\n" +
+                        "We will review your request and get back to you within 24 hours with a detailed quote.\n\n" +
+                        "Best regards,\n" +
+                        "Everything Souvenirs & Gifts Team\n" +
+                        "Phone: +234 705 353 1269\n" +
+                        "Email: everythingsouvenirsandgifts@gmail.com",
+                quoteRequest.getName(),
+                quoteRequest.getProduct(),
+                quoteRequest.getProduct(),
+                quoteRequest.getQuantity() != null ? quoteRequest.getQuantity() : "Not specified",
+                quoteRequest.getCompany() != null ? quoteRequest.getCompany() : "Not specified"
+        );
+
+        message.setText(text);
+        mailSender.send(message);
     }
 
-    @Async
-    @Override
-    public void sendResetPasswordEmail(String toEmail, String otp) {
-        String subject = "Reset Your Password";
-        String htmlContent = buildResetPasswordHtmlTemplate(otp);
-        sendHtmlEmail(toEmail, subject, htmlContent);
+    public void sendQuoteRequestNotification(QuoteRequest quoteRequest) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(adminEmail);
+        message.setSubject("New Quote Request Received");
+
+        String text = String.format(
+                "A new quote request has been received:\n\n" +
+                        "Customer: %s\n" +
+                        "Email: %s\n" +
+                        "Phone: %s\n" +
+                        "Company: %s\n" +
+                        "Product: %s\n" +
+                        "Quantity: %s\n" +
+                        "Message: %s\n\n" +
+                        "Please review and respond within 24 hours.",
+                quoteRequest.getName(),
+                quoteRequest.getEmail(),
+                quoteRequest.getPhone() != null ? quoteRequest.getPhone() : "Not provided",
+                quoteRequest.getCompany() != null ? quoteRequest.getCompany() : "Not provided",
+                quoteRequest.getProduct(),
+                quoteRequest.getQuantity() != null ? quoteRequest.getQuantity() : "Not specified",
+                quoteRequest.getMessage() != null ? quoteRequest.getMessage() : "No additional message"
+        );
+
+        message.setText(text);
+        mailSender.send(message);
     }
 
+    public void sendQuoteStatusUpdate(QuoteRequest quoteRequest) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(quoteRequest.getEmail());
+        message.setSubject("Quote Request Status Update - Everything Souvenirs & Gifts");
 
-    private void sendHtmlEmail(String to, String subject, String content) {
-        try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        String text = String.format(
+                "Dear %s,\n\n" +
+                        "Your quote request status has been updated to: %s\n\n" +
+                        "Product: %s\n" +
+                        "Request ID: %s\n\n" +
+                        "If you have any questions, please don't hesitate to contact us.\n\n" +
+                        "Best regards,\n" +
+                        "Everything Souvenirs & Gifts Team\n" +
+                        "Phone: +234 705 353 1269\n" +
+                        "Email: everythingsouvenirsandgifts@gmail.com",
+                quoteRequest.getName(),
+                quoteRequest.getStatus().toString(),
+                quoteRequest.getProduct(),
+                quoteRequest.getId()
+        );
 
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(content, true);
-
-            mailSender.send(mimeMessage);
-            log.info("Email sent to {}", to);
-
-        } catch (MessagingException | MailException e) {
-            log.error("error {}",e.getMessage());
-            throw new EmailNotSentException("Failed to send email. Please try again later.");
-        }
-    }
-    private String buildOtpHtmlTemplate(String otp) {
-        return """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Your OTP Code</title>
-                </head>
-                <body style="font-family: Arial, sans-serif;">
-                    <div style="max-width: 600px; margin: auto; padding: 20px; background-color: #f4f4f4; border-radius: 10px;">
-                        <h2 style="color: #333;">Your One-Time Password (OTP)</h2>
-                        <p>Please use the OTP below to complete your action:</p>
-                        <p style="font-size: 24px; font-weight: bold; color: #007BFF;">%s</p>
-                        <p>This OTP is valid for <strong>%d minutes</strong>.</p>
-                        <p>If you did not request this, you can safely ignore this email.</p>
-                        <br/>
-                        <p>Regards,<br/>SkillNest Team</p>
-                    </div>
-                </body>
-                </html>
-                """.formatted(otp, OTP_EXPIRY_MINUTES);
-    }
-
-    private String buildResetPasswordHtmlTemplate(String otp) {
-        return """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Reset Your Password</title>
-                </head>
-                <body style="font-family: Arial, sans-serif;">
-                    <div style="max-width: 600px; margin: auto; padding: 20px; background-color: #fefefe; border-radius: 10px;">
-                        <h2 style="color: #333;">Reset Password Request</h2>
-                        <p>Use the OTP below to reset your password:</p>
-                        <p style="font-size: 24px; font-weight: bold; color: #DC3545;">%s</p>
-                        <p>This code will expire in <strong>%d minutes</strong>.</p>
-                        <p>If you didn't request this, ignore this email.</p>
-                        <br/>
-                        <p>Regards,<br/>SkillNest Security</p>
-                    </div>
-                </body>
-                </html>
-                """.formatted(otp, OTP_EXPIRY_MINUTES);
+        message.setText(text);
+        mailSender.send(message);
     }
 }

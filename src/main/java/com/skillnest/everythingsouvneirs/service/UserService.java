@@ -1,27 +1,31 @@
 package com.skillnest.everythingsouvneirs.service;
 
-import com.skillnest.everythingsouvneirs.dtos.request.*;
-import com.skillnest.everythingsouvneirs.dtos.response.*;
-import org.springframework.web.multipart.MultipartFile;
+import com.skillnest.everythingsouvneirs.data.model.User;
+import com.skillnest.everythingsouvneirs.data.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.util.Optional;
 
-public interface UserService {
-    OTPResponse sendVerificationOTP(CreateUserRequest request);
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    CreatedUserResponse register(RegisterUserRequest request);
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-    UploadResponse uploadFile(MultipartFile file) throws IOException;
+    public User createUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
 
-    LoginResponse login(LoginRequest loginRequest);
-
-    UpdateUserProfileResponse updateProfile(UpdateUserProfileRequest updateUserProfileRequest);
-
-    ResetPasswordResponse resetPassword(ChangePasswordRequest changePasswordRequest);
-
-    ResetPasswordResponse sendResetOtp(ResetPasswordRequest resetPasswordRequest);
-
-    FoundResponse findUserById(String id);
-
-    LoginResponse handleGoogleLogin(String email, String name);
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
