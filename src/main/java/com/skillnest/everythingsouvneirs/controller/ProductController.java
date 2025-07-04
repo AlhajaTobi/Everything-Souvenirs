@@ -1,5 +1,7 @@
 package com.skillnest.everythingsouvneirs.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.skillnest.everythingsouvneirs.data.model.Product;
 
 import com.skillnest.everythingsouvneirs.service.ProductService;
@@ -13,9 +15,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
@@ -24,6 +29,8 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private Cloudinary cloudinary;
 
     // Get all active products
     @GetMapping
@@ -162,6 +169,21 @@ public class ProductController {
             return ResponseEntity.ok(count);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/upload-image")
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "image"));
+            String imageUrl = (String) uploadResult.get("url");
+            Map<String, String> response = new HashMap<>();
+            response.put("url", imageUrl);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Failed to upload image: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 }
