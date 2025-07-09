@@ -11,11 +11,12 @@ public class MongoConfig {
 
     @Bean
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb://localhost:27017");
+        return MongoClients
+                .create("mongodb+srv://oladimejivictor611:NYSh0JeKocC4Tmkl@everything-souvneirs.sijhpkl.mongodb.net/everything-souvenirs?retryWrites=true&w=majority");
     }
 
     @Bean
     public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-        return new MongoTemplate(mongoClient, "everything-souvneirs");
+        return new MongoTemplate(mongoClient, "everything-souvenirs");
     }
 }
