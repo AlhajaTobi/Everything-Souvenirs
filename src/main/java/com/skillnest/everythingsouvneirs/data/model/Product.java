@@ -4,19 +4,24 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-@Document(collection = "products")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "products")
 public class Product {
+
     @Id
     private String id;
 
@@ -54,13 +59,10 @@ public class Product {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-
-    // Helper method for formatted price range
     public String getFormattedPriceRange() {
         if (priceRange.getMin().equals(priceRange.getMax())) {
             return String.format("%s %,d", priceRange.getCurrency(), priceRange.getMin());
         }
         return String.format("%s %,d - %,d", priceRange.getCurrency(), priceRange.getMin(), priceRange.getMax());
     }
-
 }
